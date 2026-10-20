@@ -224,10 +224,10 @@ class StartCodespaceUseCase @Inject constructor(
             .filter { codespace ->
                 // Nur wiederverwenden, wenn derselbe devcontainer genutzt wird.
                 // Codespaces aus der Web-UI mit anderem devcontainer laufen ohne code-server.
-                val samePath = if (devcontainerPath == null) {
-                    codespace.devcontainerPath == null
-                } else {
-                    codespace.devcontainerPath.equals(devcontainerPath, ignoreCase = true)
+                val samePath = when {
+                    devcontainerPath == null -> true
+                    codespace.devcontainerPath == null -> true
+                    else -> codespace.devcontainerPath.equals(devcontainerPath, ignoreCase = true)
                 }
                 samePath && codespace.state != CodespaceState.SHUTTING_DOWN
             }
