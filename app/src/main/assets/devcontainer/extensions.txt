@@ -1,0 +1,3 @@
+kilocode.kilo-code
+saoudrizwan.claude-dev
+GitHub.github-vscode-theme

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="canvas">#0D1117</color>
+    <color name="surface">#161B22</color>
+    <color name="surface_inset">#010409</color>
+    <color name="surface_raised">#21262D</color>
+    <color name="accent">#1F6FEB</color>
+    <color name="ic_launcher_background">#0D1117</color>
+</resources>

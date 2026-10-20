@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.CodespaceManager" parent="Theme.AppCompat.NoActionBar">
+        <item name="android:statusBarColor">@color/surface_inset</item>
+        <item name="android:navigationBarColor">@color/surface_inset</item>
+        <item name="android:windowBackground">@color/canvas</item>
+        <item name="android:windowLightStatusBar">false</item>
+    </style>
+</resources>
