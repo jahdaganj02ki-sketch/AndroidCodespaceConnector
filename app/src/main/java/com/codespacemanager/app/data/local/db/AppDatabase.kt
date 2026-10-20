@@ -53,7 +53,9 @@ interface CodespaceDao {
 @Database(
     entities = [AccountEntity::class, CodespaceEntity::class],
     version = 1,
-    exportSchema = true,
+    // Kein Schema-Export: Debug- und Release-Variante laufen parallel und wuerden in dieselbe
+    // Datei schreiben (Race Condition). Migrationen laufen ueber fallbackToDestructiveMigration.
+    exportSchema = false,
 )
 abstract class AppDatabase : RoomDatabase() {
     abstract fun accountDao(): AccountDao
