@@ -41,7 +41,7 @@ class DevTunnelClientTest {
         server.shutdown()
     }
 
-    private val localProperties(): TunnelProperties = properties.copy(
+    private fun localProperties(): TunnelProperties = properties.copy(
         serviceUri = server.url("/").toString(),
     )
 
