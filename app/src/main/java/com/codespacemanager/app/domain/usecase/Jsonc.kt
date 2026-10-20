@@ -7,7 +7,7 @@ package com.codespacemanager.app.domain.usecase
  */
 object Jsonc {
 
-    /** Entfernt `//`-Zeilen- und `/* *\/`-Blockkommentare ausserhalb von Strings. */
+    /** Entfernt Zeilen- und Blockkommentare ausserhalb von Strings. */
     fun stripComments(input: String): String {
         val out = StringBuilder(input.length)
         var i = 0
