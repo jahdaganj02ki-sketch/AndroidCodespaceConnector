@@ -9,6 +9,7 @@ import com.codespacemanager.app.domain.model.Repo
 import com.codespacemanager.app.domain.model.RepoTemplate
 import com.codespacemanager.app.domain.usecase.DevContainerTemplates
 import com.codespacemanager.app.domain.usecase.DevContainerScriptProvider
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow

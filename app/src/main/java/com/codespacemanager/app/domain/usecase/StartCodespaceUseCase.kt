@@ -2,6 +2,8 @@ package com.codespacemanager.app.domain.usecase
 
 import com.codespacemanager.app.core.ApiException
 import com.codespacemanager.app.domain.gateway.CodespaceGateway
+import com.codespacemanager.app.domain.gateway.EditorHealthGateway
+import com.codespacemanager.app.domain.gateway.EditorProbeResult
 import com.codespacemanager.app.domain.gateway.PortGateway
 import com.codespacemanager.app.domain.gateway.PortVisibility
 import com.codespacemanager.app.domain.gateway.RepoGateway
@@ -75,11 +77,6 @@ data class StartCodespaceParams(
 )
 
 /** Ergebnis einer Editor-Erreichbarkeitspruefung. */
-enum class EditorProbeResult { OK, STARTING, UNREACHABLE }
-
-interface EditorHealthGateway {
-    suspend fun probe(url: String): EditorProbeResult
-}
 
 /**
  * State-Machine: PruefeRepo -> BereiteRepo(optional) -> ErzeugeCodespace ->

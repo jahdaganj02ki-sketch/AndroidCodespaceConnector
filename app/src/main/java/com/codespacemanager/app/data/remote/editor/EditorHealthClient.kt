@@ -1,7 +1,7 @@
 package com.codespacemanager.app.data.remote.editor
 
-import com.codespacemanager.app.domain.usecase.EditorHealthGateway
-import com.codespacemanager.app.domain.usecase.EditorProbeResult
+import com.codespacemanager.app.domain.gateway.EditorHealthGateway
+import com.codespacemanager.app.domain.gateway.EditorProbeResult
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient

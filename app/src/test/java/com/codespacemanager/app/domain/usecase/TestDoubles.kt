@@ -1,6 +1,8 @@
 package com.codespacemanager.app.domain.usecase
 
 import com.codespacemanager.app.domain.gateway.CodespaceGateway
+import com.codespacemanager.app.domain.gateway.EditorHealthGateway
+import com.codespacemanager.app.domain.gateway.EditorProbeResult
 import com.codespacemanager.app.domain.gateway.PortGateway
 import com.codespacemanager.app.domain.gateway.PortSetupResult
 import com.codespacemanager.app.domain.gateway.PortVisibility
