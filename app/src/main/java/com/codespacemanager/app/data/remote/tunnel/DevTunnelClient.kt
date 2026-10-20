@@ -2,6 +2,7 @@ package com.codespacemanager.app.data.remote.tunnel
 
 import com.codespacemanager.app.core.NetworkException
 import com.codespacemanager.app.core.TunnelException
+import com.codespacemanager.app.di.TunnelClient
 import com.codespacemanager.app.domain.gateway.SettingsGateway
 import com.codespacemanager.app.domain.gateway.TunnelProperties
 import kotlinx.coroutines.Dispatchers
@@ -12,6 +13,8 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.IOException
+import javax.inject.Inject
+import javax.inject.Singleton
 
 /**
  * Client fuer die Dev-Tunnels-REST-API (nicht `api.github.com`).
@@ -20,8 +23,9 @@ import java.io.IOException
  * `.../tunnels/{id}/ports` oder `.../api/v1/tunnels/{id}/ports`.
  * Die funktionierende Variante wird in den Einstellungen gemerkt.
  */
-class DevTunnelClient(
-    private val httpClient: OkHttpClient,
+@Singleton
+class DevTunnelClient @Inject constructor(
+    @TunnelClient private val httpClient: OkHttpClient,
     private val settingsGateway: SettingsGateway,
 ) {
 
