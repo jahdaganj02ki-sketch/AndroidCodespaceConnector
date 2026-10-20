@@ -6,6 +6,7 @@ import com.codespacemanager.app.data.local.datastore.SettingsStore
 import com.codespacemanager.app.data.repository.AuthCoordinator
 import com.codespacemanager.app.domain.gateway.AppSettings
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -36,7 +37,7 @@ class MainViewModel @Inject constructor(
     private val _loginState = MutableStateFlow<LoginState>(LoginState.Idle)
     val loginState: StateFlow<LoginState> = _loginState.asStateFlow()
 
-    val settings: StateFlow<AppSettings> = settingsStore.settings
+    val settings: Flow<AppSettings> = settingsStore.settings
 
     val hasCredentials: StateFlow<Boolean> = settingsStore.settings
         .map { it.hasCredentials }

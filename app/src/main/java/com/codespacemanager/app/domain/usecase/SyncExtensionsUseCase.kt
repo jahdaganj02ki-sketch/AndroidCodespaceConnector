@@ -3,6 +3,7 @@ package com.codespacemanager.app.domain.usecase
 import com.codespacemanager.app.domain.gateway.ExtensionInfo
 import com.codespacemanager.app.domain.gateway.OpenVsxGateway
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import javax.inject.Inject
@@ -25,7 +26,9 @@ class SyncExtensionsUseCase @Inject constructor(
         val entries = resolveAll(extensionIds)
             .filter { !it.vsixUrl.isNullOrBlank() }
             .associate { it.id to it.vsixUrl.orEmpty() }
-        val obj = JsonObject(entries.mapValues { JsonPrimitive(it.value) })
+        val content = mutableMapOf<String, JsonElement>()
+        entries.forEach { (key, value) -> content[key] = JsonPrimitive(value) }
+        val obj = JsonObject(content)
         return json.encodeToString(JsonObject.serializer(), obj) + "\n"
     }
 }

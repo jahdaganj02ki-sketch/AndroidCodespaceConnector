@@ -1,7 +1,6 @@
 package com.codespacemanager.app.domain.usecase
 
 import com.codespacemanager.app.domain.model.Codespace
-import com.codespacemanager.app.domain.model.CodespaceState
 
 /**
  * Schaetzung des Kontingent-Verbrauchs: Summe (Kerne x Stunden seit `last_used_at`).
@@ -25,10 +24,6 @@ object QuotaEstimator {
         now: Long = System.currentTimeMillis(),
     ): Double = codespaces.sumOf { codespace ->
         val lastUsed = codespace.lastUsedAtMillis ?: return@sumOf 0.0
-        if (codespace.state == CodespaceState.SHUTDOWN && codespace.lastOpenedAtMillis != null) {
-            // Gestoppte Codespaces verbrauchen keine Rechenzeit mehr.
-            return@sumOf 0.0
-        }
         val hours = (now - lastUsed).coerceAtLeast(0L) / 3_600_000.0
         hours * coresForMachine(codespace.machine)
     }

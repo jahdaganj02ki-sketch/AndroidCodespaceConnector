@@ -2,6 +2,7 @@ package com.codespacemanager.app.domain.usecase
 
 import com.codespacemanager.app.domain.model.RepoTemplate
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.put
 import kotlinx.serialization.json.putJsonObject
@@ -83,7 +84,7 @@ object DevContainerTemplates {
                 }
             }
 
-            putJsonArray("forwardPorts") { add(EDITOR_PORT) }
+            putJsonArray("forwardPorts") { add(JsonPrimitive(EDITOR_PORT)) }
 
             putJsonObject("portsAttributes") {
                 putJsonObject(EDITOR_PORT.toString()) {

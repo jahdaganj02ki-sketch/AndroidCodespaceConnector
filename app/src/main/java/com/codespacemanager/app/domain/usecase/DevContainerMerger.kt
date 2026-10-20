@@ -100,7 +100,11 @@ object DevContainerMerger {
             // forwardPorts
             val forwardPorts = root["forwardPorts"]
             when (forwardPorts) {
-                null -> put("forwardPorts", buildJsonArray { add(DevContainerTemplates.EDITOR_PORT) })
+                null -> put(
+                    "forwardPorts",
+                    buildJsonArray { add(JsonPrimitive(DevContainerTemplates.EDITOR_PORT)) },
+                )
+
                 is JsonArray -> put(
                     "forwardPorts",
                     buildJsonArray {
@@ -108,13 +112,13 @@ object DevContainerMerger {
                         forwardPorts.forEach { element ->
                             val port = element.jsonPrimitive.content.toIntOrNull()
                             if (port != null) {
-                                if (seen.add(port)) add(port)
+                                if (seen.add(port)) add(JsonPrimitive(port))
                             } else {
                                 add(element)
                             }
                         }
                         if (seen.add(DevContainerTemplates.EDITOR_PORT)) {
-                            add(DevContainerTemplates.EDITOR_PORT)
+                            add(JsonPrimitive(DevContainerTemplates.EDITOR_PORT))
                         }
                     },
                 )

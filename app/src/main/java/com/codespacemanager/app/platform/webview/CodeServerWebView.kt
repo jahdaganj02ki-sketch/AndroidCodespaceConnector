@@ -149,7 +149,7 @@ class CodeServerWebViewFactory(
 
     private fun fetchWithTunnelHeaders(request: WebResourceRequest): WebResourceResponse? {
         return try {
-            val builder = Request.Builder().url(request.url)
+            val builder = Request.Builder().url(request.url.toString())
             request.requestHeaders.forEach { (key, value) -> builder.header(key, value) }
             builder.header(HEADER_SKIP_ANTI_PHISHING, "true")
             if (!connectAccessToken.isNullOrBlank()) {
