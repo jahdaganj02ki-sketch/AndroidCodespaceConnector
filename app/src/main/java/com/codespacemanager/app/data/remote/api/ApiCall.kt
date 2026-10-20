@@ -40,10 +40,10 @@ fun <T> retrofit2.Response<T>.requireBody(): T {
     if (!isSuccessful) {
         val raw = runCatching { errorBody()?.string() }.getOrNull()
         throw ApiException(
-            statusCode = code,
-            message = "GitHub-API antwortete mit HTTP $code",
+            statusCode = code(),
+            message = "GitHub-API antwortete mit HTTP ${code()}",
             body = raw,
         )
     }
-    return body() ?: throw ApiException(code, "GitHub-API lieferte eine leere Antwort")
+    return body() ?: throw ApiException(code(), "GitHub-API lieferte eine leere Antwort")
 }
