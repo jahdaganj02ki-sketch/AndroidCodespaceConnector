@@ -123,7 +123,7 @@ class DevTunnelClient @Inject constructor(
     private fun buildUrl(properties: TunnelProperties, variant: String, port: Int): String {
         val base = properties.normalizedServiceUri
         val prefix = variant.trim('/')
-        return "$base/$prefix/tunnels/${properties.tunnelId}/ports/$port" +
+        return "$base/$prefix/${properties.tunnelId}/ports/$port" +
             "?api-version=$API_VERSION"
     }
 
