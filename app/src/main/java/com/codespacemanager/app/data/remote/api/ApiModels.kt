@@ -64,7 +64,7 @@ data class CreateRepoRequest(
 
 @Serializable
 data class ContentDto(
-    val path: String,
+    val path: String = "",
     val sha: String = "",
     val content: String = "",
     val encoding: String? = "base64",
