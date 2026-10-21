@@ -83,9 +83,16 @@ fun SettingsScreen(
             AppCard {
                 Column(modifier = Modifier.padding(14.dp)) {
                     Text(
-                        text = "GitHub OAuth",
+                        text = "Erweiterte Konfiguration",
                         style = MaterialTheme.typography.labelSmall,
                         color = colors.textMuted,
+                    )
+                    Spacer(Modifier.height(6.dp))
+                    Text(
+                        text = "Die ausgelieferte App bringt bereits eine OAuth-App mit. Hier " +
+                            "können eigene Client-ID und Client-Secret hinterlegt werden.",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = colors.textSecondary,
                     )
                     Spacer(Modifier.height(10.dp))
                     OutlinedTextField(

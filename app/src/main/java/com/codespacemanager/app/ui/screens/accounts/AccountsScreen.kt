@@ -39,14 +39,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import com.codespacemanager.app.domain.model.Account
-import com.codespacemanager.app.platform.customtabs.CustomTabsHelper
 import com.codespacemanager.app.ui.components.AppCard
 import com.codespacemanager.app.ui.components.EmptyState
 import com.codespacemanager.app.ui.components.LoadingState
@@ -60,17 +58,16 @@ import com.codespacemanager.app.ui.theme.AppTheme
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AccountsScreen(
+    onAddAccount: () -> Unit,
     viewModel: AccountsViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
-    val context = LocalContext.current
     val colors = AppTheme.colors
     var pendingRemoval by remember { mutableStateOf<Account?>(null) }
 
     LaunchedEffect(Unit) {
         viewModel.events.collect { event ->
             when (event) {
-                is AccountsEvent.OpenUrl -> CustomTabsHelper.open(context, event.url)
                 is AccountsEvent.Message -> Unit
             }
         }
@@ -108,7 +105,7 @@ fun AccountsScreen(
                     title = "Noch kein Konto verbunden",
                     message = "Melde dich mit deinem GitHub-Konto an, um Codespaces zu verwalten.",
                     icon = Icons.Outlined.Add,
-                    action = { PrimaryButton(text = "Konto hinzufügen", onClick = viewModel::addAccount) },
+                    action = { PrimaryButton(text = "Konto hinzufügen", onClick = onAddAccount) },
                 )
             } else {
                 LazyColumn(
@@ -128,7 +125,7 @@ fun AccountsScreen(
                         Spacer(Modifier.height(8.dp))
                         SecondaryButton(
                             text = "Konto hinzufügen",
-                            onClick = viewModel::addAccount,
+                            onClick = onAddAccount,
                             icon = Icons.Outlined.Add,
                         )
                     }

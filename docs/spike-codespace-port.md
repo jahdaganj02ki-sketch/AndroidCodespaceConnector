@@ -28,11 +28,15 @@ export CLIENT_SECRET=<oauth client secret>
 ### 1. Token + Repo + devcontainer
 
 ```bash
-# Token per PKCE (Device-Flow funktioniert nicht, der Redirect ist custom)
-# Der einfachste Weg für den Spike: die App selbst nutzen oder
+# Token per PKCE im Web-Flow (Authorization Code + PKCE).
+# Der Device-Flow funktioniert zwar, taugt aber nicht fuer den Spike:
+#   - er liefert keinen Code, sondern direkt ein Token (kein PKCE noetig) und
+#   - er unterstuetzt nur die Scopes ohne "codespace" nicht zuverlaessig.
+# Der einfachste Weg fuer den Spike: die App selbst nutzen (Login-Screen) oder
 # https://github.com/login/oauth/authorize?client_id=$CLIENT_ID&
 #   redirect_uri=com.codespacemanager.app://oauth/callback&scope=repo%20codespace%20read:org
 #   &state=x&code_challenge=<sha256(base64url(verifier))>&code_challenge_method=S256
+# Der Callback landet in der App (Custom Scheme) - der Code steht im Redirect-URI.
 
 curl -s -X POST https://github.com/login/oauth/access_token \
   -H "Accept: application/json" \

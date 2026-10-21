@@ -18,7 +18,7 @@ GET https://github.com/login/oauth/authorize
     &scope=repo%20codespace%20read:org
     &state=…
     &code_challenge=…&code_challenge_method=S256
-    &prompt=select_account
+    [&prompt=select_account]
 ```
 
 ```
@@ -31,6 +31,19 @@ Body: client_id, client_secret, code, redirect_uri, code_verifier
 * Custom-Schemen-Redirects sind erlaubt → GitHub blendet automatisch den Account-Picker ein.
 * Scopes: `repo` (Repos anlegen), `codespace` (Pflicht), `read:org` (Org-Repos).
 * OAuth-Tokens laufen nicht ab.
+* `allow_signup` wird **nicht** gesetzt (Default `true`): Nutzer ohne GitHub-Konto können sich
+  so wie auf github.com über „Continue with Google“ registrieren.
+
+**Varianten des `prompt`-Parameters** (`SignInProvider` in `platform/auth/OAuth.kt`):
+
+| Anmeldeweg | `prompt` | Wirkung |
+|---|---|---|
+| „Mit GitHub anmelden“ | `select_account` | GitHub blendet die **Kontoauswahl** ein. |
+| „Mit Google anmelden“ | *nicht gesetzt* | GitHub blendet seine **volle Anmeldeseite** ein – inkl. „Continue with Google“ / „Continue with Apple“. |
+
+Beide Wege laufen über dieselbe Autorisierungs-URL in einem Custom Tab; es gibt keine
+Deep-Link-Schnittstelle, die GitHubs „Continue with Google“ direkt ansteuert
+(`github.com/login/google` und `github.com/sessions/google` liefern 404).
 
 **Header für alle REST-Calls**
 

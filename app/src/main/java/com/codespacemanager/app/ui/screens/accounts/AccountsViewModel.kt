@@ -3,7 +3,6 @@ package com.codespacemanager.app.ui.screens.accounts
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.codespacemanager.app.data.repository.AccountRepository
-import com.codespacemanager.app.data.repository.AuthCoordinator
 import com.codespacemanager.app.domain.model.Account
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -22,14 +21,12 @@ data class AccountsUiState(
 )
 
 sealed interface AccountsEvent {
-    data class OpenUrl(val url: String) : AccountsEvent
     data class Message(val text: String) : AccountsEvent
 }
 
 @HiltViewModel
 class AccountsViewModel @Inject constructor(
     private val accountRepository: AccountRepository,
-    private val authCoordinator: AuthCoordinator,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(AccountsUiState())
@@ -46,19 +43,6 @@ class AccountsViewModel @Inject constructor(
                     activeLogin = accountRepository.activeAccountLogin(),
                     loading = false,
                 )
-            }
-        }
-    }
-
-    fun addAccount() {
-        viewModelScope.launch {
-            val url = authCoordinator.authorizeUrl()
-            if (url == null) {
-                _events.tryEmit(
-                    AccountsEvent.Message("Keine Client-ID hinterlegt – bitte in den Einstellungen eintragen"),
-                )
-            } else {
-                _events.tryEmit(AccountsEvent.OpenUrl(url))
             }
         }
     }

@@ -66,8 +66,9 @@ class SettingsStore @Inject constructor(
             tunnelApiPathVariant = preferences[KEY_TUNNEL_VARIANT].orEmpty(),
             extensionIds = extensionIds,
             hasSeenAgentKeyHint = preferences[KEY_SEEN_AGENT_HINT] ?: false,
-            setupCompleted = preferences[KEY_SETUP_COMPLETED] ?: false,
             activeAccountLogin = preferences[KEY_ACTIVE_ACCOUNT],
+            pendingOAuthState = preferences[KEY_PENDING_OAUTH_STATE].orEmpty(),
+            pendingOAuthVerifier = preferences[KEY_PENDING_OAUTH_VERIFIER].orEmpty(),
         )
     }
 
@@ -82,7 +83,8 @@ class SettingsStore @Inject constructor(
         preferences[KEY_TUNNEL_VARIANT] = settings.tunnelApiPathVariant
         preferences[KEY_EXTENSIONS] = settings.extensionIds.toSet()
         preferences[KEY_SEEN_AGENT_HINT] = settings.hasSeenAgentKeyHint
-        preferences[KEY_SETUP_COMPLETED] = settings.setupCompleted
+        preferences[KEY_PENDING_OAUTH_STATE] = settings.pendingOAuthState
+        preferences[KEY_PENDING_OAUTH_VERIFIER] = settings.pendingOAuthVerifier
         val active = settings.activeAccountLogin
         if (active == null) preferences.remove(KEY_ACTIVE_ACCOUNT) else preferences[KEY_ACTIVE_ACCOUNT] = active
     }
@@ -102,7 +104,8 @@ class SettingsStore @Inject constructor(
         private val KEY_TUNNEL_VARIANT = stringPreferencesKey("tunnel_api_path_variant")
         private val KEY_EXTENSIONS = stringSetPreferencesKey("extension_ids")
         private val KEY_SEEN_AGENT_HINT = booleanPreferencesKey("seen_agent_key_hint")
-        private val KEY_SETUP_COMPLETED = booleanPreferencesKey("setup_completed")
         private val KEY_ACTIVE_ACCOUNT = stringPreferencesKey("active_account")
+        private val KEY_PENDING_OAUTH_STATE = stringPreferencesKey("pending_oauth_state")
+        private val KEY_PENDING_OAUTH_VERIFIER = stringPreferencesKey("pending_oauth_verifier")
     }
 }

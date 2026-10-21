@@ -16,11 +16,12 @@ data class AppSettings(
     val tunnelApiPathVariant: String = "",
     val extensionIds: List<String> = DevContainerTemplates.DEFAULT_EXTENSIONS,
     val hasSeenAgentKeyHint: Boolean = false,
-    val setupCompleted: Boolean = false,
     val activeAccountLogin: String? = null,
-) {
-    val hasCredentials: Boolean get() = clientIdOverride.isNotBlank() && clientSecretOverride.isNotBlank()
-}
+    /** State des laufenden OAuth-Flows (leer = kein Flow aktiv). */
+    val pendingOAuthState: String = "",
+    /** PKCE-Verifier des laufenden OAuth-Flows. */
+    val pendingOAuthVerifier: String = "",
+)
 
 interface SettingsGateway {
     val settings: Flow<AppSettings>

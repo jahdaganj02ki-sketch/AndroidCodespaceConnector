@@ -3,13 +3,19 @@
 ## Für Anwender (Moto G84)
 
 1. **OAuth-App anlegen**: <https://github.com/settings/developers> → OAuth Apps → New OAuth App
-   → Callback `com.codespacemanager.app://oauth/callback`.
-2. **Secrets hinterlegen** (optional): Repository → Settings → Secrets and variables → Actions →
-   `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET`. Fehlen sie, zeigt die App einen Setup-Screen.
+   → Callback `com.codespacemanager.app://oauth/callback`. Die Werte werden per
+   Repository-Secret `GITHUB_CLIENT_ID`/`GITHUB_CLIENT_SECRET` in den Build gegeben – die App
+   bringt die OAuth-App also fest mit und startet direkt mit dem Login-Screen.
+2. **Secrets hinterlegen**: Repository → Settings → Secrets and variables → Actions →
+   `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET`. Fehlen sie (z. B. Build aus einem Fork), klappt
+   der Login-Screen den Abschnitt **„OAuth-App konfigurieren“** auf; dort lassen sich ID und
+   Secret nachträglich eintragen.
 3. **APK beziehen**: Actions → Workflow *Android* → grüner Lauf → Artifact
    `codespace-manager-<sha>` → `app-debug.apk` herunterladen.
 4. **Installieren**: APK auf das Gerät kopieren, antippen, „Unbekannte Apps“ erlauben.
-5. **Konto anmelden**: *Konten* → *Konto hinzufügen* → GitHub-Anmeldung im Custom Tab.
+5. **Konto anmelden**: beim ersten Start erscheint der Login-Screen → „Mit GitHub anmelden“
+   (Kontoauswahl) oder „Mit Google anmelden“ (GitHubs volle Anmeldeseite inkl. „Continue with
+   Google“). Die Auswahl erfolgt in GitHubs Browser-Seite, nicht in einem Google-Fenster der App.
 6. **Codespace starten**: *Repos* → Repo → *Codespace starten* → Bestätigungs-Diff prüfen →
    *Übernehmen* → Fortschritt beobachten → Editor öffnet sich.
 
@@ -39,7 +45,8 @@
 4. `upload-artifact` (`codespace-manager-<sha>`, 14 Tage)
 
 `GITHUB_CLIENT_ID`/`GITHUB_CLIENT_SECRET` werden als Environment-Variablen an Gradle gereicht und
-landen in `BuildConfig`.
+landen in `BuildConfig`. Ohne die Secrets bleibt `BuildConfig` leer – der Login-Screen blendet
+dann den Abschnitt „OAuth-App konfigurieren“ ein, damit die App trotzdem nutzbar ist.
 
 ### Debug-Key
 

@@ -21,7 +21,10 @@ Als Alternative steht jederzeit das native Codespaces-UI im Browser (Custom Tab)
 3. **Authorization callback URL**: `com.codespacemanager.app://oauth/callback`
 4. **Generate client secret** und beide Werte notieren.
 
-### 1.2 CI-Secrets hinterlegen (optional)
+Die App liefert die OAuth-App fest mit. Für die Anmeldung ist deshalb **kein Setup-Schritt**
+nötig – der erste Bildschirm ist die Anmeldung selbst.
+
+### 1.2 CI-Secrets hinterlegen
 
 Im Repository unter **Settings → Secrets and variables → Actions**:
 
@@ -30,9 +33,10 @@ Im Repository unter **Settings → Secrets and variables → Actions**:
 | `GITHUB_CLIENT_ID` | Client-ID der OAuth-App |
 | `GITHUB_CLIENT_SECRET` | Client-Secret der OAuth-App |
 
-Die Werte werden als Gradle-Properties injiziert und landen in `BuildConfig`. Ohne Secrets zeigt
-die App beim ersten Start einen **Setup-Screen**, auf dem ID und Secret eingegeben werden können
-(die Eingabe hat Vorrang vor dem BuildConfig-Wert und wird lokal verschlüsselt gespeichert).
+Die Werte werden als Gradle-Properties injiziert und landen in `BuildConfig`. Fehlen sie (z. B.
+bei Builds aus einem Fork), zeigt der Login-Screen den Abschnitt **„OAuth-App konfigurieren"**
+geöffnet; nach dem Eintragen von ID und Secret funktioniert die Anmeldung. Die Eingabe hat
+Vorrang vor dem BuildConfig-Wert und wird lokal gespeichert.
 
 ### 1.3 Build auslösen
 
@@ -56,13 +60,33 @@ lädt das APK als Artifact `codespace-manager-<sha>` hoch (Aufbewahrung 14 Tage)
 
 ## 2. Nutzung
 
-1. **Konten** → *Konto hinzufügen* → GitHub meldet sich im Custom Tab an. GitHub blendet bei
-   Custom-Schemen automatisch den Account-Picker ein, mehrere Konten parallel sind möglich.
-2. **Repos** → Repository auswählen (eigene + Organisation-Repos) oder *Neues Repo* anlegen
+### 2.1 Anmeldung
+
+Beim Start (ohne verbundenes Konto) zeigt die App den **Login-Screen**:
+
+* **„Mit GitHub anmelden“** öffnet GitHubs Autorisierungsseite mit Kontoauswahl
+  (`prompt=select_account`).
+* **„Mit Google anmelden“** öffnet dieselbe Seite **ohne** `prompt` – GitHub blendet dann seine
+  volle Anmeldeseite inkl. **„Continue with Google“** ein. Die Auswahl erfolgt also in
+  GitHubs Browser-Seite, **nicht** in einem Google-Fenster der App: die App enthält kein
+  Google-SDK und kein Credential Manager. Ein Google-ID-Token lässt sich nicht in ein
+  GitHub-Token tauschen – GitHub ist der einzige Token-Aussteller.
+
+Ist der Browser bereits bei GitHub angemeldet, springt GitHub direkt zur Freigabeseite; die
+„Continue with Google“-Schaltfläche ist dann nicht sichtbar. Abbrechen in GitHub führt in der
+App zu einer Fehlermeldung mit „Erneut versuchen“.
+
+Nach erfolgreicher Anmeldung öffnet die App die Codespaces. Weitere Konten lassen sich über
+**Konten → Konto hinzufügen** hinzufügen (dort erscheint derselbe Login-Screen); wird das letzte
+Konto entfernt, kommt die App zum Login-Screen zurück.
+
+### 2.2 Codespaces verwalten
+
+1. **Repos** → Repository auswählen (eigene + Organisation-Repos) oder *Neues Repo* anlegen
    (Template **Standard** oder **Android**).
-3. **Codespace starten** → die App legt bei Bedarf den Branch `codespace/editor` an, erweitert
+2. **Codespace starten** → die App legt bei Bedarf den Branch `codespace/editor` an, erweitert
    den devcontainer um den code-server-Editor und startet den Codespace.
-4. **Editor** öffnet sich in der App (Vollbild-WebView). Die Statusanzeige in der Topbar zeigt
+3. **Editor** öffnet sich in der App (Vollbild-WebView). Die Statusanzeige in der Topbar zeigt
    **„Port öffentlich“** oder **„Port privat“**.
 
 ### Port-Sichtbarkeit (wichtig)
@@ -101,7 +125,7 @@ Spike-Protokoll in [`docs/spike-codespace-port.md`](docs/spike-codespace-port.md
 ```
 app/src/main/java/com/codespacemanager/app/
   core/        ApiException, NetworkException
-  ui/          theme/ components/ navigation/ screens/{accounts,repos,repodetail,codespaces,start,editor,settings,setup,help}
+  ui/          theme/ components/ navigation/ screens/{login,accounts,repos,repodetail,codespaces,start,editor,settings,help}
   domain/      model/ gateway/ usecase/   (Ports & Adapter, ohne Android-Abhängigkeiten)
   data/        remote/{api,tunnel,openvsx,auth,editor,update} local/{db,datastore,tokenstore,assets} repository/
   platform/    webview/ customtabs/ crypto/ auth/
@@ -111,6 +135,8 @@ app/src/main/java/com/codespacemanager/app/
 * `domain/` enthält die gesamte Logik (State-Machine, devcontainer-Merge, PKCE, Port-Policy) und
   ist ohne Android-Abhängigkeiten testbar.
 * `data/` implementiert die Gateways (`RepoGateway`, `CodespaceGateway`, `PortGateway`, …).
+* `ui/screens/login/` enthält den Anmeldescreen; er ist zugleich Start-Gate (ohne Konto) und
+  Route „Konto hinzufügen“.
 
 ---
 
@@ -120,7 +146,8 @@ app/src/main/java/com/codespacemanager/app/
 ./gradlew test lintDebug assembleDebug
 ```
 
-Unit-Tests (JVM, ohne Emulator): PKCE (RFC-7636-Testvektor), Namensvalidierung, devcontainer-
+Unit-Tests (JVM, ohne Emulator): PKCE (RFC-7636-Testvektor), OAuth-URL (prompt-Variante
+GitHub/Google), Persistenz des laufenden OAuth-Flows, Namensvalidierung, devcontainer-
 Template und -Merge, Browse-URL, State-Machine, ACE-Payloads und Pfadvarianten-Fallback der
 Tunnel-API (MockWebServer), Token-Verschlüsselung, Script-Rendering, Kontingent-Schätzung.
 
@@ -138,8 +165,11 @@ Tunnel-API (MockWebServer), Token-Verschlüsselung, Script-Rendering, Kontingent
 
 ## 7. Sicherheitshinweise
 
-* `client_secret` liegt im Debug-APK (GitHub nennt das für native Public Clients so). Das Secret
-  allein erlaubt keinen Zugriff ohne Nutzerinteraktion.
+* `client_secret` liegt im Debug-APK (GitHub verlangt es beim Web-Flow und stuft Secrets in
+  nativen Apps ohnehin als öffentlich ein). Das Secret allein erlaubt keinen Zugriff ohne
+  Nutzerinteraktion – PKCE bindet den Autorisierungscode an den Verifier, den nur die App kennt.
+* Der Anmeldeflow wird im DataStore gespeichert: Wird der Prozess während des
+  Browser-Rundgangs beendet, läuft der Login nach dem Zurückkehren in die App weiter.
 * Tokens werden mit einem AES/GCM-Schlüssel aus dem **Android Keystore** verschlüsselt und in
   `EncryptedSharedPreferences` abgelegt; sie werden beim Entfernen eines Kontos gelöscht.
 * Der Zugriffsschutz des Codespaces selbst liegt bei GitHub (Codespaces-Kontingent, Org-Policies).

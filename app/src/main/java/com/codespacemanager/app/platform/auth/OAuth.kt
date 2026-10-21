@@ -22,6 +22,21 @@ data class OAuthRequest(
     }
 }
 
+/**
+ * Anmeldeweg. Beide Varianten laufen ueber GitHubs eigene Anmeldeseite (Custom Tab);
+ * es steckt kein Google-SDK in der App.
+ */
+enum class SignInProvider {
+    /** GitHub-Kontoauswahl (`prompt=select_account`). */
+    GITHUB,
+
+    /**
+     * GitHubs volle Anmeldeseite ohne `prompt` – dort blendet GitHub
+     * „Continue with Google" / „Continue with Apple" ein.
+     */
+    GOOGLE,
+}
+
 /** Ergebnis des OAuth-Callbacks. */
 sealed interface OAuthCallback {
     data class Success(val code: String, val state: String?) : OAuthCallback
@@ -38,6 +53,7 @@ object OAuth {
     fun authorizeUrl(
         clientId: String,
         request: OAuthRequest,
+        provider: SignInProvider = SignInProvider.GITHUB,
         login: String? = null,
     ): String {
         val params = linkedMapOf(
@@ -47,8 +63,11 @@ object OAuth {
             "state" to request.state,
             "code_challenge" to Pkce.codeChallenge(request.codeVerifier),
             "code_challenge_method" to "S256",
-            "prompt" to "select_account",
         )
+        // Ohne "prompt" zeigt GitHub die komplette Anmeldeseite inkl. "Continue with Google".
+        if (provider == SignInProvider.GITHUB) {
+            params["prompt"] = "select_account"
+        }
         if (!login.isNullOrBlank()) {
             params["login"] = login
         }
